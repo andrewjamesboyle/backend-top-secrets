@@ -57,6 +57,16 @@ describe('top-secret users tests', () => {
     });
   });
 
+  it('should return a 403 when signed in but not admin and listing all users', async () => {
+    const [agent] = await registerAndLogin();
+    const res = await agent.get('/api/v1/users');
+
+    expect(res.body).toEqual({
+      message: 'You do not have access to view this page',
+      status: 403,
+    });
+  });
+
   afterAll(() => {
     pool.end();
   });
