@@ -41,7 +41,6 @@ describe('top-secret users tests', () => {
   it('signs in and returns user', async () => {
     const [agent, user] = await registerAndLogin();
     const me = await agent.get('/api/v1/users/me');
-    console.log('me', me.body);
     expect(me.body).toEqual({
       ...user,
       exp: expect.any(Number),
@@ -49,13 +48,14 @@ describe('top-secret users tests', () => {
     });
   });
 
-  // it('POST /api/v1/sessions signs in an existing user', async () => {
-  //   await request(app).post('/api/v1/users').send(mockUser);
-  //   const res = await request(app)
-  //     .post('/api/v1/users/sessions')
-  //     .send({ email: 'test@example.com', password: '12345' });
-  //   expect(res.status).toEqual(200);
-  // });
+  it('should return a 401 when signed out and listing all users', async () => {
+    const res = await request(app).get('/api/v1/users');
+
+    expect(res.body).toEqual({
+      message: 'You must be signed in to continue',
+      status: 401,
+    });
+  });
 
   afterAll(() => {
     pool.end();
